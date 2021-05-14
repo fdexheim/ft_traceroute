@@ -20,10 +20,11 @@
 #define IP_HEADER_SIZE_V6 40
 #define ICMP_HEADER_SIZE 8
 #define ICMP_HEADER_SIZE_V6 8
-#define ICMP_PAYLOAD_SIZE 56
-#define ICMP_PAYLOAD_SIZE_V6 56
-#define FULL_PACKET_SIZE 84
-#define FULL_PACKET_SIZE_V6 104
+#define ICMP_PAYLOAD_SIZE 52
+#define ICMP_PAYLOAD_SIZE_V6 52
+#define FULL_PACKET_SIZE IP_HEADER_SIZE + ICMP_HEADER_SIZE + ICMP_PAYLOAD_SIZE
+#define FULL_PACKET_SIZE IP_HEADER_SIZE + ICMP_HEADER_SIZE + ICMP_PAYLOAD_SIZE
+#define FULL_PACKET_SIZE_V6 IP_HEADER_SIZE_v6 + ICMP_HEADER_SIZE_v6 + ICMP_PAYLOAD_SIZE_v6
 
 typedef struct			s_traceroute_flags
 {
@@ -47,6 +48,7 @@ typedef struct			s_traceroute_env
 	int					argc;
 	char				**argv;
 	char				*dest_arg;
+	char				*addr_str;
 	t_socket_data		sock;
 	t_traceroute_flags	flags;
 	struct timeval		tv_start;
@@ -107,5 +109,8 @@ void					parse_traceroute(t_traceroute_env *env);
 
 
 void					run(t_traceroute_env *env);
+
+
+int32_t					setup_socket(t_traceroute_env *env);
 
 #endif

@@ -6,6 +6,11 @@ void						parse_flag_cluster(t_traceroute_env *env, char *arg)
 	for (uint32_t i = 1; arg[i] != '\0'; i++)
 	{
 		env->flags.h = arg[i] == 'h' ? true : env->flags.h;
+		if (arg[i] == 'v')
+		{
+			env->flags.v = true;
+			env->flags.verbose_level++;
+		}
 	}
 }
 
@@ -31,11 +36,12 @@ static void					handle_flag_m(t_traceroute_env *env, char **args)
 }
 
 //------------------------------------------------------------------------------
-static void					handle_flag_v(t_traceroute_env *env, char **args)
+static void					handle_flag_help(t_traceroute_env *env, char **args)
 {
+	(void)env;
 	(void)args;
-	env->flags.v = true;
-	env->flags.verbose_level++;
+	usage();
+	exit(EXIT_SUCCESS);
 }
 
 //------------------------------------------------------------------------------
@@ -45,7 +51,7 @@ static int32_t				check_arg_flags(t_traceroute_env *env, char **args)
 		{ "-m", 1, handle_flag_m },
 		{ "-f", 1, handle_flag_f },
 		{ "-q", 1, handle_flag_q },
-		{ "-v", 0, handle_flag_v },
+		{ "--help", 0, handle_flag_help },
 		{ NULL, 0, NULL }
 	};
 
@@ -82,7 +88,6 @@ void						parse_traceroute(t_traceroute_env *env)
 				if (env->dest_arg == NULL)
 				{
 					env->dest_arg = env->argv[i];
-					return ;
 				}
 			}
 		}

@@ -32,7 +32,8 @@ void				give_ping(t_traceroute_env *env, int ttl)
 }
 
 //------------------------------------------------------------------------------
-static void				init_msgdr(t_traceroute_env *env, struct msghdr *msg, struct iovec *iov, struct sockaddr_in *addr, char *buffer)
+static void				init_msgdr(t_traceroute_env *env, struct msghdr *msg,
+	struct iovec *iov, struct sockaddr_in *addr, char *buffer)
 {
 	*addr = env->sock.addr_dest;
 
@@ -58,8 +59,8 @@ uint8_t					get_pong(t_traceroute_env *env)
 	struct msghdr		msg;
 	uint8_t				type = 42;
 
-	while (type != ICMP_ECHOREPLY && type != ICMP_TIME_EXCEEDED)
-	{
+//	while (type != ICMP_ECHOREPLY && type != ICMP_TIME_EXCEEDED)
+//	{
 		ft_bzero(buffer, 64);
 		ft_bzero(env->in_buffer, 4096);
 		init_msgdr(env, &msg, &iov, &addr, buffer);
@@ -80,8 +81,9 @@ uint8_t					get_pong(t_traceroute_env *env)
 		{
 			if (env->flags.v == true)
 				printf("[WARNING] recvmsg() failed or timed out\n");
-			break ;
+//			break ;
+			return (type);
 		}
-	}
+//	}
 	return (type);
 }

@@ -7,8 +7,8 @@ static int32_t			browse_addrlist(t_traceroute_env *env, struct addrinfo *start)
 	char				addrstr[100];
 	int					optval = 1;
 	struct timeval		timeout = {
-		.tv_sec = 0,
-		.tv_usec = 900000
+		.tv_sec = 10,
+		.tv_usec = 0
 	};
 
 	for (ptr = start; ptr != NULL; ptr = ptr->ai_next)
@@ -32,9 +32,8 @@ static int32_t			browse_addrlist(t_traceroute_env *env, struct addrinfo *start)
 			printf("Bad setsockopt()\n");
 			exit(EXIT_FAILURE);
 		}
-//		env->addr_str = ft_strdup(addrstr);
-//		env->socket_data.addr_dest.sin_addr.s_addr =
-//			((struct sockaddr_in*)ptr->ai_addr)->sin_addr.s_addr;
+		env->sock.addr_dest.sin_addr.s_addr =
+			((struct sockaddr_in*)ptr->ai_addr)->sin_addr.s_addr;
 		env->sock.addr_dest.sin_family = AF_INET;
 		break;
 	}

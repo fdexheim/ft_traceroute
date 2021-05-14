@@ -39,10 +39,11 @@ void					check_response(t_traceroute_env *env, struct msghdr *hdr, size_t read_s
 	check_checksums(env, env->in_buffer);
 	ft_bzero(addr_str, 100);
 	inet_ntop(AF_INET, &addr->sin_addr, addr_str, 99);
-	printf("%ld.%03ldms ", rtt / 1000, rtt % 1000);
-//	printf("From %s ", addr_str);
+//	dump_msghdr(hdr);
+	printf("%s ", addr_str);
 //	if (ft_strcmp(env->dest, env->addr_str))
 //		printf("(%s) ", addr_str);
+	printf("%ld.%03ldms ", rtt / 1000, rtt % 1000);
 }
 
 /*

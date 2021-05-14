@@ -1,7 +1,7 @@
 #include "../inc/ft_traceroute.h"
 
 //------------------------------------------------------------------------------
-static void				init_values(t_traceroute_env *env)
+static void				init_default_values(t_traceroute_env *env)
 {
 	if (env->flags.f == false)
 		env->first_ttl = 1;
@@ -46,7 +46,7 @@ static uint8_t			probe_gate(t_traceroute_env *env, uint32_t ttl)
 {
 	uint8_t				type;
 
-	printf("%d ", env->first_ttl);
+	printf("%d ", ttl);
 	for (uint32_t probe = 0; probe < env->nqueries; probe++)
 	{
 		type = exchange(env, ttl);
@@ -59,9 +59,10 @@ static void				loop(t_traceroute_env *env)
 {
 	uint8_t				type;
 
-	for (uint32_t ttl = env->first_ttl; ttl < env->max_ttl; ttl++)
+	for (uint32_t ttl = env->first_ttl; ttl <= env->max_ttl; ttl++)
 	{
 		type = probe_gate(env, ttl);
+		printf("\n");
 		if (type != ICMP_TIME_EXCEEDED)
 			break;
 	}
@@ -70,11 +71,19 @@ static void				loop(t_traceroute_env *env)
 //------------------------------------------------------------------------------
 void				run(t_traceroute_env *env)
 {
-	init_values(env);
+	init_default_values(env);
+	if (setup_socket(env) == -1)
+	{
+		printf("[ERROR] Failed to setup socket\n");
+		return ;
+	}
 	if (env->dest_arg == NULL)
 	{
 		ft_putstr("No destination address detected in args\n");
 		return ;
 	}
+	printf("traceroute to %s (%s), %d hops max, %ld byte packets\n",
+		"PH_ADDR_STR", "PH_ADDR",
+		env->max_ttl, env->icmp_header_size + env->icmp_payload_size);
 	loop(env);
 }

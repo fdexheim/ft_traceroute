@@ -3,13 +3,20 @@
 //------------------------------------------------------------------------------
 void				list_flags()
 {
-	
+	printf("flags :\n");
+	printf("-f [ttl]      | Set starting value for ttl\n");
+	printf("-h            | flag required by subject that has no known use in "
+	"any implementation of traceroute\n");
+	printf("-m [ttl]      | Set a maximum value for ttl\n");
+	printf("-q [nqueries] | Set the number of queries for each ttl iteration\n");
+	printf("-v            | Verbose for debugging (add more v's for more verbose)\n");
+	printf("-ipv6         | ipv6 mode (NYI)\n");
 }
 
 //------------------------------------------------------------------------------
 void				usage(void)
 {
-	ft_putstr("Usage: ./ft_traceroute command [command opts] [command args]\n");
+	ft_putstr("Usage: ./ft_traceroute [addr] [flags]\n");
 	list_flags();
 	return ;
 }
