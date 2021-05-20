@@ -46,9 +46,12 @@ static uint8_t			probe_gate(t_traceroute_env *env, uint32_t ttl)
 {
 	uint8_t				type;
 
+	if (ttl < 10)
+		printf(" ");
 	printf("%d ", ttl);
 	for (uint32_t probe = 0; probe < env->nqueries; probe++)
 	{
+		printf(" ");
 		type = exchange(env, ttl);
 	}
 	return (type);
@@ -63,7 +66,7 @@ static void				loop(t_traceroute_env *env)
 	{
 		type = probe_gate(env, ttl);
 		printf("\n");
-		if (type != ICMP_TIME_EXCEEDED)
+		if (type == ICMP_ECHOREPLY)
 			break;
 	}
 }
@@ -83,7 +86,7 @@ void				run(t_traceroute_env *env)
 		return ;
 	}
 	printf("traceroute to %s (%s), %d hops max, %ld byte packets\n",
-		"PH_ADDR_STR", "PH_ADDR",
+		env->dest_arg, env->addr_str,
 		env->max_ttl, env->icmp_header_size + env->icmp_payload_size);
 	loop(env);
 }

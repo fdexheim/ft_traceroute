@@ -1,6 +1,5 @@
 #include "../inc/ft_traceroute.h"
 
-
 static void				check_checksums(t_traceroute_env *env, void *full_packet)
 {
 	uint16_t			ip_sum;
@@ -17,7 +16,7 @@ static void				check_checksums(t_traceroute_env *env, void *full_packet)
 
 //------------------------------------------------------------------------------
 static suseconds_t		get_rtt_sus(struct timeval *start,
-struct timeval *end)
+		struct timeval *end)
 {
 	time_t				diff_sec;
 	suseconds_t			diff_usec;
@@ -28,51 +27,28 @@ struct timeval *end)
 }
 
 //------------------------------------------------------------------------------
-void					check_response(t_traceroute_env *env, struct msghdr *hdr, size_t read_size)
+void					check_response(t_traceroute_env *env, struct msghdr *hdr, ssize_t read_size)
 {
 	suseconds_t			rtt;
 	struct sockaddr_in	*addr = hdr->msg_name;
 	char				addr_str[100];
-	(void)read_size;
 
-	rtt = get_rtt_sus(&env->tv_start, &env->tv_end);
-	check_checksums(env, env->in_buffer);
-	ft_bzero(addr_str, 100);
-	inet_ntop(AF_INET, &addr->sin_addr, addr_str, 99);
-//	dump_msghdr(hdr);
-	printf("%s ", addr_str);
-//	if (ft_strcmp(env->dest, env->addr_str))
-//		printf("(%s) ", addr_str);
-	printf("%ld.%03ldms ", rtt / 1000, rtt % 1000);
+	if (read_size < 0)
+	{
+		printf("*");
+	}
+	else
+	{
+		rtt = get_rtt_sus(&env->tv_start, &env->tv_end);
+		check_checksums(env, env->in_buffer);
+		ft_bzero(addr_str, 100);
+		inet_ntop(AF_INET, &addr->sin_addr, addr_str, 99);
+		if (env->sock.last_hop.sin_addr.s_addr != addr->sin_addr.s_addr)
+		{
+			env->sock.last_hop = *addr;
+			printf("%s ", addr_str);
+			printf("(%s) ", addr_str);
+		}
+		printf("%ld.%03ldms ", rtt / 1000, rtt % 1000);
+	}
 }
-
-/*
-   static const char		*get_icmp_type_msg(uint8_t type)
-   {
-   const char			*icmp_type_msg[] = {
-   [ICMP_ECHOREPLY] = "Echo Reply",
-   [1] = "Unknown type",
-   [2] = "Unknown type",
-   [ICMP_DEST_UNREACH] = "Destination Unreachable",
-   [ICMP_SOURCE_QUENCH] = "Source Quench",
-   [ICMP_REDIRECT] = "Redirect (change route)",
-   [6] = "Unknown type",
-   [7] = "Unknown type",
-   [ICMP_ECHO] = "Echo Request",
-   [9] = "Unknown type",
-   [10] = "Unknown type",
-   [ICMP_TIME_EXCEEDED] = "Time to live exceeded",
-   [ICMP_PARAMETERPROB] = "Parameter Problem",
-   [ICMP_TIMESTAMP] = "Timestamp Request",
-   [ICMP_TIMESTAMPREPLY] = "Timestamp Reply",
-   [ICMP_INFO_REQUEST] = "Information Request",
-   [ICMP_INFO_REPLY] = "Information Reply",
-   [ICMP_ADDRESS] = "Address Mask Request",
-   [ICMP_ADDRESSREPLY] = "Address Mask Reply"
-   };
-
-   if (type > NR_ICMP_TYPES)
-   return ("Unknown type");
-   return (icmp_type_msg[type]);
-}
-*/

@@ -24,6 +24,10 @@ void				usage(void)
 //------------------------------------------------------------------------------
 void				close_env(t_traceroute_env *env)
 {
+	if (env->addr_str != NULL)
+	{
+		free(env->addr_str);
+	}
 	free(env);
 }
 

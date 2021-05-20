@@ -7,7 +7,7 @@ static int32_t			browse_addrlist(t_traceroute_env *env, struct addrinfo *start)
 	char				addrstr[100];
 	int					optval = 1;
 	struct timeval		timeout = {
-		.tv_sec = 10,
+		.tv_sec = 5,
 		.tv_usec = 0
 	};
 
@@ -35,6 +35,7 @@ static int32_t			browse_addrlist(t_traceroute_env *env, struct addrinfo *start)
 		env->sock.addr_dest.sin_addr.s_addr =
 			((struct sockaddr_in*)ptr->ai_addr)->sin_addr.s_addr;
 		env->sock.addr_dest.sin_family = AF_INET;
+		env->addr_str = ft_strdup(addrstr);
 		break;
 	}
 	return (env->sock.fd);

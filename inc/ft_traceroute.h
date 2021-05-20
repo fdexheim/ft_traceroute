@@ -41,6 +41,7 @@ typedef struct			s_socket_data
 {
 	int					fd;
 	struct sockaddr_in	addr_dest;
+	struct sockaddr_in	last_hop;
 }						t_socket_data;
 
 typedef struct			s_traceroute_env
@@ -75,7 +76,7 @@ typedef struct			s_traceroute_arg_flag
 }						t_traceroute_arg_flags;
 
 
-void					check_response(t_traceroute_env *env, struct msghdr *hdr, size_t read_size);
+void					check_response(t_traceroute_env *env, struct msghdr *hdr, ssize_t read_size);
 
 
 uint16_t				calculate_checksum(void *start, uint32_t iters);

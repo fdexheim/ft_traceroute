@@ -82,7 +82,7 @@ uint8_t					get_pong(t_traceroute_env *env)
 			if (env->flags.v == true)
 				printf("[WARNING] recvmsg() failed or timed out\n");
 //			break ;
-			return (type);
+			return (-1);
 		}
 //	}
 	return (type);
