@@ -8,7 +8,8 @@ bool						ft_check_nb_args_required(char **args, uint32_t nb_arg)
 	{
 		if (args[i] == NULL)
 		{
-			printf("Missing arguments for flag %s\n", args[0]);
+			printf("Missing arguments for arg '%s', expecting %d, got %d\n",
+				args[0], nb_arg, i - 1);
 			return (false);
 		}
 	}

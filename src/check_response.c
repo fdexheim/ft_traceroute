@@ -46,8 +46,7 @@ void					check_response(t_traceroute_env *env, struct msghdr *hdr, ssize_t read_
 		if (env->sock.last_hop.sin_addr.s_addr != addr->sin_addr.s_addr)
 		{
 			env->sock.last_hop = *addr;
-			printf("%s ", addr_str);
-			printf("(%s) ", addr_str);
+			printf("%s (%s) ", addr_str, addr_str);
 		}
 		printf("%ld.%03ldms ", rtt / 1000, rtt % 1000);
 	}

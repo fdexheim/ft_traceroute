@@ -45,12 +45,20 @@ static void					handle_flag_help(t_traceroute_env *env, char **args)
 }
 
 //------------------------------------------------------------------------------
+static void					handle_flag_ipv6(t_traceroute_env *env, char **args)
+{
+	(void)args;
+	env->flags.ipv6 = true;
+}
+
+//------------------------------------------------------------------------------
 static int32_t				check_arg_flags(t_traceroute_env *env, char **args)
 {
 	const t_traceroute_arg_flags	traceroute_arg_flags[] = {
 		{ "-m", 1, handle_flag_m },
 		{ "-f", 1, handle_flag_f },
 		{ "-q", 1, handle_flag_q },
+		{ "-ipv6", 1, handle_flag_ipv6 },
 		{ "--help", 0, handle_flag_help },
 		{ NULL, 0, NULL }
 	};

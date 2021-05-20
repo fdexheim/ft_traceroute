@@ -75,9 +75,14 @@ static void				loop(t_traceroute_env *env)
 void				run(t_traceroute_env *env)
 {
 	init_default_values(env);
+	if (env->flags.ipv6 == true)
+	{
+		printf("[Warning] Please note that Ipv6 handling is not yet implemented. Exiting...\n");
+		return ;
+	}
 	if (setup_socket(env) == -1)
 	{
-		printf("[ERROR] Failed to setup socket\n");
+		printf("[Error] Failed to setup socket\n");
 		return ;
 	}
 	if (env->dest_arg == NULL)
