@@ -17,22 +17,41 @@ void						parse_flag_cluster(t_traceroute_env *env, char *arg)
 //------------------------------------------------------------------------------
 static void					handle_flag_q(t_traceroute_env *env, char **args)
 {
+	int						nq = ft_atoi(args[1]);
+
+	if (nq < 0)
+	{
+		printf("Bad value for -q flag, nqueries will use default value\n");
+		return ;
+	}
 	env->flags.q = true;
-	env->nqueries = ft_atoi(args[1]);
+	env->nqueries = nq;
 }
 
 //------------------------------------------------------------------------------
 static void					handle_flag_f(t_traceroute_env *env, char **args)
 {
+	int						first_ttl = ft_atoi(args[1]);
+	if (first_ttl < 0)
+	{
+		printf("Bad value for -f flag, first_ttl will use default value\n");
+		return ;
+	}
 	env->flags.f = true;
-	env->first_ttl = ft_atoi(args[1]);
+	env->first_ttl = first_ttl;
 }
 
 //------------------------------------------------------------------------------
 static void					handle_flag_m(t_traceroute_env *env, char **args)
 {
+	int						max_ttl = ft_atoi(args[1]);
+	if (max_ttl < 0)
+	{
+		printf("Bad value for -m flag, max_ttl will use default value\n");
+		return ;
+	}
 	env->flags.m = true;
-	env->max_ttl = ft_atoi(args[1]);
+	env->max_ttl = max_ttl;
 }
 
 //------------------------------------------------------------------------------

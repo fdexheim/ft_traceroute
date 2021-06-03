@@ -100,12 +100,9 @@ void					get_pong(t_traceroute_env *env, uint32_t queri)
 		}
 	}
 	check_response(env, queri);
-	if (env->flags.v == true && env->rep.icmp_type != ICMP_TIME_EXCEEDED)
+	if (env->flags.v == true && env->rep.read_size < 0)
+		printf("(Timed out) ");
+	else if (env->flags.v == true && env->rep.icmp_type != ICMP_TIME_EXCEEDED)
 		printf("(%s) ", get_icmp_type_msg(env->rep.icmp_type));
-	if (env->rep.read_size < 0)
-	{
-		if (env->flags.v == true)
-			printf("[WARNING] recvmsg() failed or timed out\n");
-	}
 	return ;
 }

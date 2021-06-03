@@ -3,9 +3,10 @@
 //------------------------------------------------------------------------------
 void				list_flags()
 {
-	printf("flags :\n");
+	printf("\nFlags :\n");
+	printf("--help        | Display help pannel\n");
 	printf("-f [ttl]      | Set starting value for ttl\n");
-	printf("-h            | flag required by subject that has no known use in "
+	printf("-h            | Flag required by subject that has no known use in "
 	"any implementation of traceroute\n");
 	printf("-m [ttl]      | Set a maximum value for ttl\n");
 	printf("-q [nqueries] | Set the number of queries for each ttl iteration\n");
