@@ -27,13 +27,13 @@ static suseconds_t		get_rtt_sus(struct timeval *start,
 }
 
 //------------------------------------------------------------------------------
-void					check_response(t_traceroute_env *env, struct msghdr *hdr, ssize_t read_size)
+void					check_response(t_traceroute_env *env, uint32_t queri)
 {
 	suseconds_t			rtt;
-	struct sockaddr_in	*addr = hdr->msg_name;
+	struct sockaddr_in	*addr = env->rep.msg.msg_name;
 	char				addr_str[100];
 
-	if (read_size < 0)
+	if (env->rep.read_size < 0)
 	{
 		printf("*");
 	}
@@ -43,11 +43,14 @@ void					check_response(t_traceroute_env *env, struct msghdr *hdr, ssize_t read_
 		check_checksums(env, env->in_buffer);
 		ft_bzero(addr_str, 100);
 		inet_ntop(AF_INET, &addr->sin_addr, addr_str, 99);
-		if (env->sock.last_hop.sin_addr.s_addr != addr->sin_addr.s_addr)
+		if ((env->sock.last_hop.sin_addr.s_addr != addr->sin_addr.s_addr)
+			|| queri == 0)
 		{
 			env->sock.last_hop = *addr;
 			printf("%s (%s) ", addr_str, addr_str);
 		}
 		printf("%ld.%03ldms ", rtt / 1000, rtt % 1000);
 	}
+	if (env->rep.icmp_type == ICMP_DEST_UNREACH)
+		printf("!N ");
 }

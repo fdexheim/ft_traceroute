@@ -32,41 +32,27 @@ static void				init_default_values(t_traceroute_env *env)
 }
 
 //------------------------------------------------------------------------------
-static uint8_t			exchange(t_traceroute_env *env, uint32_t ttl)
+void			probe_gate(t_traceroute_env *env, uint32_t ttl)
 {
-	int					type;
-
-	give_ping(env, ttl);
-	type = get_pong(env);
-	return (type);
-}
-
-//------------------------------------------------------------------------------
-static uint8_t			probe_gate(t_traceroute_env *env, uint32_t ttl)
-{
-	uint8_t				type;
-
 	if (ttl < 10)
 		printf(" ");
 	printf("%d ", ttl);
 	for (uint32_t probe = 0; probe < env->nqueries; probe++)
 	{
 		printf(" ");
-		type = exchange(env, ttl);
+		give_ping(env, ttl);
+		get_pong(env, probe);
 	}
-	return (type);
 }
 
 //------------------------------------------------------------------------------
 static void				loop(t_traceroute_env *env)
 {
-	uint8_t				type;
-
 	for (uint32_t ttl = env->first_ttl; ttl <= env->max_ttl; ttl++)
 	{
-		type = probe_gate(env, ttl);
+		probe_gate(env, ttl);
 		printf("\n");
-		if (type == ICMP_ECHOREPLY)
+		if (env->rep.icmp_type != ICMP_TIME_EXCEEDED && env->rep.read_size > 0)
 			break;
 	}
 }
@@ -80,7 +66,7 @@ void				run(t_traceroute_env *env)
 		printf("[Warning] Please note that Ipv6 handling is not yet implemented. Exiting...\n");
 		return ;
 	}
-	if (setup_socket(env) == -1)
+	if (setup_socket(env) < 0)
 	{
 		printf("[Error] Failed to setup socket\n");
 		return ;

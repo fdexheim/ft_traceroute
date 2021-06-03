@@ -44,12 +44,22 @@ typedef struct			s_socket_data
 	struct sockaddr_in	last_hop;
 }						t_socket_data;
 
+typedef struct			s_rep
+{
+	ssize_t				read_size;
+	struct sockaddr_in	addr;
+	struct iovec		iov;
+	struct msghdr		msg;
+	uint8_t				icmp_type;
+}						t_rep;
+
 typedef struct			s_traceroute_env
 {
 	int					argc;
 	char				**argv;
 	char				*dest_arg;
 	char				*addr_str;
+	t_rep				rep;
 	t_socket_data		sock;
 	t_traceroute_flags	flags;
 	struct timeval		tv_start;
@@ -76,7 +86,7 @@ typedef struct			s_traceroute_arg_flag
 }						t_traceroute_arg_flags;
 
 
-void					check_response(t_traceroute_env *env, struct msghdr *hdr, ssize_t read_size);
+void					check_response(t_traceroute_env *env, uint32_t queri);
 
 
 uint16_t				calculate_checksum(void *start, uint32_t iters);
@@ -94,12 +104,14 @@ void					init_icmp_header_ipv6(void *header_start, int seq, size_t icmp_size);
 void					init_icmp_header_ipv4(void *header_start, int seq, size_t icmp_size);
 
 
-void					init_ipv6_header(void *header_start, size_t full_packet_size, int ttl, void *addr);
-void					init_ipv4_header(void *header_start, size_t full_packet_size, int ttl, void *addr);
+void					init_ipv6_header(void *header_start, size_t full_packet_size,
+	int ttl, void *addr);
+void					init_ipv4_header(void *header_start, size_t full_packet_size,
+	int ttl, void *addr);
 
 
 void					give_ping(t_traceroute_env *env, int ttl);
-uint8_t					get_pong(t_traceroute_env *env);
+void					get_pong(t_traceroute_env *env, uint32_t queri);
 
 
 void					usage(void);

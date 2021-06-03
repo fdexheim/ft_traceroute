@@ -14,8 +14,8 @@ void				give_ping(t_traceroute_env *env, int ttl)
 	if (gettimeofday(&env->tv_start, NULL) < 0)
 		printf("Bad gettimeofday()");
 	ret = sendto(env->sock.fd, env->out_buffer,
-		env->full_packet_size, 0, (struct sockaddr *)&env->sock.addr_dest,
-		sizeof(env->sock.addr_dest));
+			env->full_packet_size, 0, (struct sockaddr *)&env->sock.addr_dest,
+			sizeof(env->sock.addr_dest));
 	if (env->flags.v == true)
 	{
 		if (env->flags.verbose_level >= 2)
@@ -32,8 +32,38 @@ void				give_ping(t_traceroute_env *env, int ttl)
 }
 
 //------------------------------------------------------------------------------
+static const char		*get_icmp_type_msg(uint8_t type)
+{
+	const char			*icmp_type_msg[] = {
+		[ICMP_ECHOREPLY] = "Echo Reply",
+		[1] = "Unknown type",
+		[2] = "Unknown type",
+		[ICMP_DEST_UNREACH] = "Destination Unreachable",
+		[ICMP_SOURCE_QUENCH] = "Source Quench",
+		[ICMP_REDIRECT] = "Redirect (change route)",
+		[6] = "Unknown type",
+		[7] = "Unknown type",
+		[ICMP_ECHO] = "Echo Request",
+		[9] = "Unknown type",
+		[10] = "Unknown type",
+		[ICMP_TIME_EXCEEDED] = "Time to live exceeded",
+		[ICMP_PARAMETERPROB] = "Parameter Problem",
+		[ICMP_TIMESTAMP] = "Timestamp Request",
+		[ICMP_TIMESTAMPREPLY] = "Timestamp Reply",
+		[ICMP_INFO_REQUEST] = "Information Request",
+		[ICMP_INFO_REPLY] = "Information Reply",
+		[ICMP_ADDRESS] = "Address Mask Request",
+		[ICMP_ADDRESSREPLY] = "Address Mask Reply"
+	};
+
+	if (type > NR_ICMP_TYPES)
+		return ("Unknown type");
+	return (icmp_type_msg[type]);
+}
+
+//------------------------------------------------------------------------------
 static void				init_msgdr(t_traceroute_env *env, struct msghdr *msg,
-	struct iovec *iov, struct sockaddr_in *addr, char *buffer)
+		struct iovec *iov, struct sockaddr_in *addr, char *buffer)
 {
 	*addr = env->sock.addr_dest;
 
@@ -50,40 +80,32 @@ static void				init_msgdr(t_traceroute_env *env, struct msghdr *msg,
 }
 
 //------------------------------------------------------------------------------
-uint8_t					get_pong(t_traceroute_env *env)
+void					get_pong(t_traceroute_env *env, uint32_t queri)
 {
-	ssize_t				ret;
 	char				buffer[64];
-	struct sockaddr_in	addr;
-	struct iovec		iov;
-	struct msghdr		msg;
-	uint8_t				type = 42;
 
-//	while (type != ICMP_ECHOREPLY && type != ICMP_TIME_EXCEEDED)
-//	{
-		ft_bzero(buffer, 64);
-		ft_bzero(env->in_buffer, 4096);
-		init_msgdr(env, &msg, &iov, &addr, buffer);
-		ret = recvmsg(env->sock.fd, &msg, 0);
-		type = ((struct icmphdr *)(env->in_buffer + env->ip_header_size))->type;
-		if (gettimeofday(&env->tv_end, NULL) < 0)
-			printf("bad gettimeofday()\n");
+	ft_bzero(buffer, 64);
+	ft_bzero(env->in_buffer, 4096);
+	init_msgdr(env, &env->rep.msg, &env->rep.iov, &env->rep.addr, buffer);
+	env->rep.read_size = recvmsg(env->sock.fd, &env->rep.msg, 0);
+	env->rep.icmp_type = ((struct icmphdr *)(env->in_buffer + env->ip_header_size))->type;
+	if (gettimeofday(&env->tv_end, NULL) < 0)
+		printf("bad gettimeofday()\n");
+	if (env->flags.v == true)
+	{
+		if (env->flags.verbose_level >= 2)
+		{
+			printf("Reveived packet :\n");
+			dump_packet(env, env->in_buffer);
+		}
+	}
+	check_response(env, queri);
+	if (env->flags.v == true && env->rep.icmp_type != ICMP_TIME_EXCEEDED)
+		printf("(%s) ", get_icmp_type_msg(env->rep.icmp_type));
+	if (env->rep.read_size < 0)
+	{
 		if (env->flags.v == true)
-		{
-			if (env->flags.verbose_level >= 2)
-			{
-				printf("Reveived packet :\n");
-				dump_packet(env, env->in_buffer);
-			}
-		}
-		check_response(env, &msg, ret);
-		if (ret < 0)
-		{
-			if (env->flags.v == true)
-				printf("[WARNING] recvmsg() failed or timed out\n");
-//			break ;
-			return (-1);
-		}
-//	}
-	return (type);
+			printf("[WARNING] recvmsg() failed or timed out\n");
+	}
+	return ;
 }

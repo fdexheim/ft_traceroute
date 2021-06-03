@@ -17,11 +17,13 @@ static int32_t			browse_addrlist(t_traceroute_env *env, struct addrinfo *start)
 		inet_ntop(ptr->ai_addr->sa_family, ptr->ai_addr->sa_data + 2, addrstr, 99);
 		env->sock.fd = socket(AF_INET, SOCK_RAW,
 			IPPROTO_ICMP);
-		if (env->sock.fd == -1)
+		if (env->sock.fd < 0)
 		{
 			printf("Bad socket()\n");
 			printf("Make sure you're running the program with the "
 				"requirered permissions to open a raw socket\n");
+			if (ptr->ai_next == NULL)
+				break;
 			continue;
 		}
 		if (setsockopt(env->sock.fd, IPPROTO_IP, IP_HDRINCL,
@@ -56,7 +58,7 @@ int32_t					setup_socket(t_traceroute_env *env)
 	ret = getaddrinfo(env->dest_arg, NULL, &hints, &start);
 	if (ret != 0)
 	{
-		printf("ping: %s: Could not resolve hostname\n", env->dest_arg);
+		printf("traceroute: %s: Could not resolve hostname\n", env->dest_arg);
 		return (ret);
 	}
 	browse_addrlist(env, start);
