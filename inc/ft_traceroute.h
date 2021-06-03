@@ -28,6 +28,8 @@
 
 typedef struct			s_traceroute_flags
 {
+	bool				d;
+	uint8_t				debug_level;
 	bool				f;
 	bool				h;
 	bool				m;

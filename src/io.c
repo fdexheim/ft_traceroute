@@ -16,13 +16,10 @@ void				give_ping(t_traceroute_env *env, int ttl)
 	ret = sendto(env->sock.fd, env->out_buffer,
 			env->full_packet_size, 0, (struct sockaddr *)&env->sock.addr_dest,
 			sizeof(env->sock.addr_dest));
-	if (env->flags.v == true)
+	if (env->flags.debug_level >= 2)
 	{
-		if (env->flags.verbose_level >= 2)
-		{
-			printf("Sent packet :\n");
-			dump_packet(env, env->out_buffer);
-		}
+		printf("Sent packet :\n");
+		dump_packet(env, env->out_buffer);
 	}
 	if (ret < 0)
 	{
@@ -91,18 +88,15 @@ void					get_pong(t_traceroute_env *env, uint32_t queri)
 	env->rep.icmp_type = ((struct icmphdr *)(env->in_buffer + env->ip_header_size))->type;
 	if (gettimeofday(&env->tv_end, NULL) < 0)
 		printf("bad gettimeofday()\n");
-	if (env->flags.v == true)
+	if (env->flags.debug_level >= 2)
 	{
-		if (env->flags.verbose_level >= 2)
-		{
-			printf("Reveived packet :\n");
-			dump_packet(env, env->in_buffer);
-		}
+		printf("Reveived packet :\n");
+		dump_packet(env, env->in_buffer);
 	}
 	check_response(env, queri);
-	if (env->flags.v == true && env->rep.read_size < 0)
+	if (env->flags.verbose_level >= 2 && env->rep.read_size < 0)
 		printf("(Timed out) ");
-	else if (env->flags.v == true && env->rep.icmp_type != ICMP_TIME_EXCEEDED)
+	else if (env->flags.debug_level >= 1 && env->rep.icmp_type != ICMP_TIME_EXCEEDED)
 		printf("(%s) ", get_icmp_type_msg(env->rep.icmp_type));
 	return ;
 }

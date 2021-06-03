@@ -11,6 +11,11 @@ void						parse_flag_cluster(t_traceroute_env *env, char *arg)
 			env->flags.v = true;
 			env->flags.verbose_level++;
 		}
+		if (arg[i] == 'd')
+		{
+			env->flags.d = true;
+			env->flags.debug_level++;
+		}
 	}
 }
 

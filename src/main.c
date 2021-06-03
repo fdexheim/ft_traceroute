@@ -6,11 +6,13 @@ void				list_flags()
 	printf("\nFlags :\n");
 	printf("--help        | Display help pannel\n");
 	printf("-f [ttl]      | Set starting value for ttl\n");
-	printf("-h            | Flag required by subject that has no known use in "
-	"any implementation of traceroute\n");
+	printf("-h            | Flag required by subject that has no known use in\n"
+	"                any implementation of traceroute\n");
 	printf("-m [ttl]      | Set a maximum value for ttl\n");
 	printf("-q [nqueries] | Set the number of queries for each ttl iteration\n");
-	printf("-v            | Verbose for debugging (add more v's for more verbose)\n");
+	printf("-v            | Verbose mode with mildly better formatting\n"
+	"                and proper hostname. Requires a (relatively) large window (120 chars)\n");
+	printf("-d            | Debugging verbose (you shouln't need it but I do :) )\n");
 	printf("-ipv6         | ipv6 mode (NYI)\n");
 }
 
